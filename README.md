@@ -1,10 +1,10 @@
 # scripts
 Repository containing useful scripts.
 
-## gitlab_group_archive.py
+## gitlab_group_archive.py + gitlab_metadata_to_github.py
 
-### How to Use
-To run the script on single directories, you would use the following command
+### How to Use the Archive Script
+To run the archive script on single directories, you would use the following command
 ```
 GITLAB_TOKEN=xxxx python gitlab_group_archive.py \
   --gitlab https://gitlab.example.edu \
@@ -40,4 +40,27 @@ git push --mirror https://github.com/billingegroup/my-repo.git
 ```
 Note that this process can also be scripted if you wish to migrate a larger
 number of repositories to GitHub.
+
+### Migrating the Issues/PRs/Milestones from GitLab to GitHub
+What we've done so far is use the archive script to create a bare mirror
+clone that we eventually use to push to GitHub using the ``git push --mirror``
+command. A standard git mirror clone only includes the git data itself: commits,
+branches, and tags. It does not include "metadata" like issues, pull requests
+(merge requests in GitLab), or comments because those are part of the GitLab platform,
+not the git repository. After pushing the mirror to GitHub, we must now run the 
+``gitlab_metadata_to_github.py`` script to migrate the issues/PRs.
+
+Pre-Requisites:
+1. GitHub CLI: Ensure it is installed and that you are logged in (run ``gh auth login``)
+2. Archive Directory: You need the folder containing your unzipped archives
+(where the ``metadata.json`` files live).
+
+Usage:
+From inside your ``archives_test`` folder,
+```
+python gitlab_metadata_to_github.py \
+  --metadata ./billingegroup__my-repo-123/metadata.json \
+  --github-repo billingegroup/myrepo
+```
+Note that this assumes you already pushed the mirror to ``billingegroup/myrepo``.
 
