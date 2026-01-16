@@ -19,10 +19,25 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+import shutil
+
+def find_gh():
+    gh = shutil.which("gh")
+    if not gh:
+        raise RuntimeError(
+            "GitHub CLI (gh) not found in PATH.\n"
+            "Install from: https://cli.github.com and restart your terminal."
+        )
+    return gh
+
+GH_BIN = find_gh()
 
 
 def run(cmd):
-    p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    if cmd[0] == "gh":
+        cmd = [GH_BIN] + cmd[1:]
+    
+    p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace")
     if p.returncode != 0:
         raise RuntimeError(p.stdout)
     return p.stdout
@@ -89,7 +104,7 @@ def main():
         print("metadata.json not found:", metadata_path)
         sys.exit(1)
 
-    with open(metadata_path) as f:
+    with open(metadata_path, encoding="utf-8") as f:
         meta = json.load(f)
 
     repo = args.github_repo
