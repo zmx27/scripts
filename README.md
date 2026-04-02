@@ -64,3 +64,17 @@ python gitlab_metadata_to_github.py \
 ```
 Note that this assumes you already pushed the mirror to ``billingegroup/myrepo``.
 
+### Automating This Process
+We can use ``batch_migrate_to_github.py`` to automate this process.
+
+Pre-Requisites:
+1. You have already run your ``gitlab_group_archive.py`` script, which generated your ``index.json`` and all the project folders.
+2. You have created the empty destination repositories on GitHub for each of these projects (the script assumes the URLs exist and you have push access).
+3. You are logged into the GitHub CLI (``gh auth login``).
+
+How to Use:
+Point it at your archive directory and provide your destination GitHub organization name:
+```
+python batch_migrate_to_github.py --archive-dir ./gitlab_archives --github-org my-github-org
+```
+
