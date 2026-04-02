@@ -65,7 +65,13 @@ python gitlab_metadata_to_github.py \
 Note that this assumes you already pushed the mirror to ``billingegroup/myrepo``.
 
 ### Automating This Process
-We can use ``batch_migrate_to_github.py`` to automate this process.
+We can use ``batch_migrate_to_github.py`` to automate this process. Here is a summary of what the wrapper does:
+
+1. It looks at the list of everything the first script (``gitlab_group_archive.py``) downloaded by going into the directory containing all the archived repos.
+2. It goes into each unzipped project folder one by one.
+3. It runs ``git push --mirror`` to send all the branches and commit history to GitHub.
+4. It immediately runs the second script (``gitlab_metadata_to_github.py``) to attach all the original GitLab issues, PRs, labels, and milestones to that new GitHub repo.
+5. All of this is done in a loop so you don't have to type it out manually for every single repository.
 
 Pre-Requisites:
 1. You have already run your ``gitlab_group_archive.py`` script, which generated your ``index.json`` and all the project folders.
